@@ -1,47 +1,36 @@
-import React, { Component } from 'react';
-import credentials from './credentials';
-import petfinder from './petfinder-client';
-import Pet from './Pet.js';
+import React from 'react'
+import credentials from './credentials'
+import petfinder from './petfinder-client'
+const pf = petfinder(credentials)
 
-const pf = petfinder(credentials);
-
-class App extends Component {
-  // constructor (props) {
-  //   super (props)
-  //   this.state = {
-  //     animal: 'dog',
-  //     breed: 'Yorkie',
-  //     location: 'Detroit, Michigan',
-  //     pets: []
-  //   }
-  // },
-
-  state = {  // stage three w babel
-    animal: 'dog',
-    breed: 'Havanese',
-    location: 'San Francisco, CA',
-    pets: []
-  };
-
-  componentDidMount () {
-    const { animal, breed, location } = this.state;  // destructuring
-    const promise = pf.pet.find({animal: animal, breed: breed, location: location, output: 'full'})
-    promise.then((data) => {
-      console.log(data)
-      const pets = data.petfinder.pets ? data.petfinder.pets.pet : [];
-      this.setState({pets: pets});
-    }).catch(err => console.error(err));
+class App extends React.Component {
+  constructor (props) {
+    super (props)
+    this.state = {
+      animal: 'dog',
+      breed: 'Havanese',
+      location: 'San Francisco, CA',
+      pets: []
+    }
   },
-
-  render() {
+  componentDidMount () {
+    const { animal, breed, location } = this.state
+    const promise = pf.pet.find({animal, breed, location, output: 'full'})
+    promise.then((data) => {
+      const pets = data.petfinder.pets ?  data.petfinder.pets.pet : []
+      this.setState({pets})
+    })
+  },
+  render () {
     return (
-      <div className="app">
-        {this.state.pets.map(pet => (
-          <Pet pet={pet} />
-        ))}
+      <div className='app'>
+        <img src='src/adopt-me.png' alt='adopt-me logo' />
+        <div>
+          <pre><code>{JSON.stringify(this.state, null, 4)}</code></pre>
+        </div>
       </div>
-    );
+    )
   }
 }
 
-export default App;
+export default App
