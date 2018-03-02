@@ -1,5 +1,5 @@
 import React from 'react'
-import petfinder from './petfinder-client'
+import petfinder, { ANIMALS } from './petfinder-client'
 const pf = petfinder()
 
 class SearchControls extends React.Component {
@@ -20,12 +20,26 @@ class SearchControls extends React.Component {
   handleBreedChange (e) {
     this.props.changeBreed(e.target.value)
   },
+  componentWillReceiveProps (nextProps) {
+    if (nextProps.animal && nextProps.breed !== this.props.animal) {
+      this.getNewBreeds(nextProps.animal)
+    }
+  },
+  handleAnimalChange (e) {
+    this.props.changeAnimal(e.target.value)
+  },
   render () {
     const breedSelector = !this.props.animal ? null : (
       <select value={this.props.breed} onChange={this.handleBreedChange}>
         <option value=''></option>
         {this.state.breeds.map((breed) => (
           <option key={breed} value={breed}>{breed}</option>
+        ))}
+      </select>
+      <select value={this.props.animal} onChange={this.handleAnimalChange}>
+        <option value=''></option>
+        {ANIMALS.map((animal) => (
+          <option key={animal} value={animal}>{animal}</option>
         ))}
       </select>
     )

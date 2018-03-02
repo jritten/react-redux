@@ -38,11 +38,20 @@ class App extends React.Component {
   changeBreed (breed) {
     this.setState({ breed }, () => this.search())
   },
+  changeAnimal (animal) {
+    this.setState({animal, breed: ''}, () => this.search())
+  },
   render () {
     return (
       <div className='app'>
         <img src='src/adopt-me.png' alt='adopt-me logo' />
         <SearchControls breed={this.state.breed} animal={this.state.animal} changeBreed={this.changeBreed} />
+        <SearchControls
+          breed={this.state.breed}
+          animal={this.state.animal}
+          changeBreed={this.changeBreed}
+          changeAnimal={this.changeAnimal}
+        />
         <div>
           {this.state.pets.map((pet) => (
             <Pet key={pet.id} pet={pet} />
