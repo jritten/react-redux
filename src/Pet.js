@@ -1,13 +1,14 @@
 import React from 'react'
+import { connect } from 'react-redux'
+import { ADD_FAVORITE, REMOVE_FAVORITE } from './actions'
 const MAX_DESCRIPTION_LENGTH = 150
 
 class Pet extends React.Component {
-  handleFavoriteChange () {
-    console.log(this.props.pet)
-    this.props.toggleFavorite(this.props.pet, !this.props.favorite)
-  },
-  render () {
-    <input type='checkbox' checked={this.props.favorite} onChange={this.handleFavoriteChange} />
+  handleFavoriteChange = () => {
+    this.props.dispatch({pet: this.props.pet, type: this.props.favorite ? REMOVE_FAVORITE : ADD_FAVORITE })
+  };
+
+  render() {
     const photos = this.props.pet.media ? this.props.pet.media.photos.photo.reduce((acc, photo) => {
       if (photo['@size'] === 'pn') {
         acc.push(photo.value)
@@ -17,6 +18,7 @@ class Pet extends React.Component {
     const description = this.props.pet.description || ''
     return(
       <div className='pet'>
+        <input type='checkbox' checked={this.props.favorite} onChange={this.handleFavoriteChange} />
         <div>
           {photos.map((photo, index) => (
             <img key={photo} alt={`${this.props.pet.name} number ${index+1}`} src={photo} />
@@ -34,4 +36,4 @@ class Pet extends React.Component {
   }
 }
 
-export default Pet
+export default connect()(Pet)

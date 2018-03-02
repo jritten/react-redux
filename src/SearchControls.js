@@ -1,54 +1,51 @@
 import React from 'react'
-import petfinder, { ANIMALS } from './petfinder-client'
-const pf = petfinder()
+import { connect } from 'react-redux'
+import { setBreed, setAnimal, search, getBreeds } from './actionCreators'
+import { ANIMALS } from './petfinder-client'
 
 class SearchControls extends React.Component {
-  state = {
-    breeds: []
+  componentDidMount() {
+    this.props.dispatch(search())
+    this.props.dispatch(getBreeds())
   }
-  componentDidMount () {
-    this.getNewBreeds(this.props.animal)
-  },
-  getNewBreeds (animal) {
-    pf.breed.list({animal})
-      .then((data) => {
-        if (data.petfinder.breeds) {
-          this.setState({breeds: data.petfinder.breeds.breed})
-        }
-      })
-  },
-  handleBreedChange (e) {
-    this.props.changeBreed(e.target.value)
-  },
-  componentWillReceiveProps (nextProps) {
-    if (nextProps.animal && nextProps.breed !== this.props.animal) {
-      this.getNewBreeds(nextProps.animal)
-    }
-  },
-  handleAnimalChange (e) {
-    this.props.changeAnimal(e.target.value)
-  },
-  render () {
+
+  handleAnimalChange = (e) => {
+    this.props.dispatch(setAnimal(e.target.value))
+  };
+
+  handleBreedChange = (e) => {
+    this.props.dispatch(setBreed(e.target.value))
+  };
+
+  render() {
     const breedSelector = !this.props.animal ? null : (
       <select value={this.props.breed} onChange={this.handleBreedChange}>
         <option value=''></option>
-        {this.state.breeds.map((breed) => (
+        {this.props.breeds.map((breed) => (
           <option key={breed} value={breed}>{breed}</option>
-        ))}
-      </select>
-      <select value={this.props.animal} onChange={this.handleAnimalChange}>
-        <option value=''></option>
-        {ANIMALS.map((animal) => (
-          <option key={animal} value={animal}>{animal}</option>
         ))}
       </select>
     )
     return (
       <div className='search'>
+        <select value={this.props.animal} onChange={this.handleAnimalChange}>
+          <option value=''></option>
+          {ANIMALS.map((animal) => (
+            <option key={animal} value={animal}>{animal}</option>
+          ))}
+        </select>
         {breedSelector}
       </div>
     )
   }
 }
 
-export default SearchControls
+const mapStateToProps = function (state) {
+  return {
+    breed: state.breed,
+    breeds: state.breeds,
+    animal: state.animal
+  }
+}
+
+export default connect(mapStateToProps)(SearchControls)
